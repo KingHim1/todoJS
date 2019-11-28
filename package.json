@@ -3,9 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "ag-grid-community": "^21.2.2",
+    "ag-grid-enterprise": "^21.2.2",
+    "ag-grid-react": "^21.2.2",
+    "exceljs": "^3.3.1",
+    "file-saver": "^2.0.2",
     "react": "^16.10.1",
     "react-dom": "^16.10.1",
-    "react-scripts": "3.1.2"
+    "react-scripts": "3.1.2",
+    "tempfile": "^3.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
