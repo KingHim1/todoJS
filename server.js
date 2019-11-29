@@ -34,4 +34,5 @@ app.get("/api/", (req, res) => {
     });
   });
 
+//app listen on port 5000
 app.listen(port, () => console.log(`Listening on port ${port}`));
