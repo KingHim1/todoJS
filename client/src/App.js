@@ -6,6 +6,7 @@ import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import { Workbook } from 'exceljs';
 import * as fs from 'file-saver';
+import axios from 'axios';
 // import {LicenseManager} from "ag-grid-enterprise";
 // LicenseManager.setLicenseKey("your license key");
 
@@ -31,6 +32,12 @@ function App() {
 // },
 })
 
+const onClick = () => {
+  axios.get('http://localhost:5000/api/pets')
+    .then(
+      response => console.log(response.data)
+    )
+}
 const title = 'Car Sell Report';
 const header = ["Year", "Month", "Make", "Model", "Quantity", "Pct"]
 const data = [
@@ -116,6 +123,7 @@ useEffect(()=>{
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
+        <button onClick={onClick}></button>
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>

@@ -21,6 +21,10 @@ con.connect(function(err) {
   if (err) throw err;
   console.log("Connected!");
 });
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'http://localhost:3001');
+    next();
+  });
 app.get("/api/pets", (req, res) => {
   con.query("SELECT * FROM company.pet", function(err, result, fields) {
     if (err) throw err;
