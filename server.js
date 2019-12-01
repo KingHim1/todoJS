@@ -11,10 +11,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //connect to database
 var con = mysql.createConnection({
   host: "localhost",
-  port: 3307,
+  port: 3306,
   user: "root",
-  password: 'password',
-  database: "company"
+  password: 'kmgj58_todo',
+  database: "todo"
 });
 
 con.connect(function(err) {
@@ -26,13 +26,13 @@ app.use((req, res, next) => {
     next();
   });
 app.get("/api/pets", (req, res) => {
-  con.query("SELECT * FROM company.pet", function(err, result, fields) {
+  con.query("SELECT * FROM todo.Users", function(err, result, fields) {
     if (err) throw err;
     res.send(result);
   });
 });
 app.get("/api/", (req, res) => {
-    con.query("SELECT * FROM company.pet", function(err, result, fields) {
+    con.query("SELECT * FROM todo.Users", function(err, result, fields) {
       if (err) throw err;
       res.send(result);
     });
