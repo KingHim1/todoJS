@@ -17,6 +17,7 @@ var con = mysql.createConnection({
   database: "todo"
 });
 
+
 con.connect(function(err) {
   if (err) throw err;
   console.log("Connected!");
@@ -37,6 +38,11 @@ app.get("/api/", (req, res) => {
       res.send(result);
     });
   });
-
+  app.get("/api/test", (req, res) => {
+    con.query("SELECT * FROM todo.Users", function(err, result, fields) {
+      if (err) throw err;
+      res.send(result);
+    });
+  });
 //app listen on port 5000
 app.listen(port, () => console.log(`Listening on port ${port}`));
