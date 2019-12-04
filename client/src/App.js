@@ -127,12 +127,6 @@ useEffect(()=>{
         <p>
           Edit <code>src/App.js</code> and save to reload.
         </p>
-	<h1>
-	  Testing this react app
-	</h1>
-  <h1>
-	  Testing this react app
-	</h1>
         <a
           className="App-link"
           target="_blank"
