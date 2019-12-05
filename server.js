@@ -13,7 +13,7 @@ var con = mysql.createConnection({
   host: "localhost",
   port: 3306,
   user: "root",
-  password: 'kmgj58_todo',
+  password: 'pw',
   database: "todo"
 });
 
