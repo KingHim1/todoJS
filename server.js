@@ -32,6 +32,12 @@ app.get("/api/pets", (req, res) => {
     res.send(result);
   });
 });
+
+app.get('/', (req, res) => {
+  console.log(req)
+  res.send('You hit the home page without restarting the server automatically\n')
+})
+
 app.get("/api/", (req, res) => {
     con.query("SELECT * FROM todo.Users", function(err, result, fields) {
       if (err) throw err;
