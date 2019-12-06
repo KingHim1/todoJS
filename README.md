@@ -9,3 +9,5 @@ To create docker mysql:
 
  To create table: 
  - create table Users ( name VARCHAR(20), email VARCHAR(255), password VARCHAR(255));
+
+ use npm express sessions
