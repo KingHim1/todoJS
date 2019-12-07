@@ -11,3 +11,8 @@ To create docker mysql:
  - create table Users ( name VARCHAR(20), email VARCHAR(255), password VARCHAR(255));
 
  use npm express sessions
+
+ SQL Basics
+ ALTER TABLE \table\ DROP Column \column\;
+ INSERT INTO \table\ (row attributes) values (values);
+ CREATE Table \table\ (row attributes with types);
