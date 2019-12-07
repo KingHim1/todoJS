@@ -14,8 +14,10 @@ import axios from 'axios';
 
 
 
-
 function App() {
+  axios.defaults.headers.post['Content-Type'] ='application/x-www-form-urlencoded';
+  axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+  const [userDetails, setUserDetails] = useState({name: "", password: ""})
   const [state, setState] = useState({
     columnDefs: [{
   headerName: "Make", field: "make", sortable:true, filter: true,
@@ -33,6 +35,7 @@ function App() {
 })
 
 const onClick = () => {
+  
   axios.get('http://localhost:5000/api/pets')
     .then(
       response => console.log(response.data)
@@ -93,13 +96,20 @@ data.forEach(d => {
 );
 
 
-const onClickButton = () => {
+const onClickButton = (e) => {
   
-  workbook.xlsx.writeBuffer().then((data) => {
-    let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    fs.saveAs(blob, 'CarData.xlsx');
-  });
-
+  // workbook.xlsx.writeBuffer().then((data) => {
+  //   let blob = new Blob([data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  //   fs.saveAs(blob, 'CarData.xlsx');
+  // });
+  console.log("test on click button");
+  axios.post('http://localhost:5000/auth/', {
+    username: userDetails.name,
+    password: userDetails.password,
+  })
+    .then(
+      response => console.log(response)
+    )
 }
 
 
@@ -121,6 +131,16 @@ useEffect(()=>{
 
   return (
     <div className="App">
+
+			<h1>Login Form</h1>
+			<form onSubmit={onClickButton}>
+				<input type="text" name="username" placeholder="Username" required value={userDetails.name} onChange={(e) => {console.log(e.target.value); setUserDetails({...userDetails, name: e.target.value})}}/>
+				<input type="password" name="password" placeholder="Password" required value={userDetails.password} onChange ={(e) => {console.log("test"); setUserDetails({...userDetails, password: e.target.value})}}/>
+				<input type="submit" onSubmit={onClickButton}/>
+			</form>
+	
+
+
       <header className="App-header">
         {/* <img src={logo} className="App-logo" alt="logo" /> */}
         <button onClick={onClick}></button>
