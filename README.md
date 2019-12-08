@@ -16,3 +16,5 @@ To create docker mysql:
  ALTER TABLE \table\ DROP Column \column\;
  INSERT INTO \table\ (row attributes) values (values);
  CREATE Table \table\ (row attributes with types);
+
+ HTTP headers must have same attributes;
