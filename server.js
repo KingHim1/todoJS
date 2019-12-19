@@ -84,5 +84,12 @@ app.get("/api/", (req, res) => {
       res.send(result);
     });
   });
+//need to add condition on user todo
+app.get("/api/todos", (req, res) => {
+  con.query("SELECT * FROM todo.todos WHERE todo.user = user.user", function (err, result, field) {
+    if (err) throw err;
+    res.send(result);
+  });
+});
 //app listen on port 5000
 app.listen(port, () => console.log(`Listening on port ${port}`));
