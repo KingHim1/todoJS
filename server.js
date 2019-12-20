@@ -91,5 +91,19 @@ app.get("/api/todos", (req, res) => {
     res.send(result);
   });
 });
+// // Need to add post to create posts 
+// app.post("/api/todos", (req, res) => {
+//   con.query("SELECT * FROM todo.todos WHERE todo.user = user.user", function (err, result, field) {
+//     if (err) throw err;
+//     res.send(result);
+//   });
+// });
+// // Need to add put to create posts 
+// app.put("/api/todos", (req, res) => {
+//   con.query("SELECT * FROM todo.todos WHERE todo.user = user.user", function (err, result, field) {
+//     if (err) throw err;
+//     res.send(result);
+//   });
+// });
 //app listen on port 5000
 app.listen(port, () => console.log(`Listening on port ${port}`));
