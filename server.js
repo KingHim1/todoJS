@@ -40,16 +40,19 @@ app.get("/api/pets", (req, res) => {
     res.send(result);
   });
 });
-app.post('/auth', function(request, response) {
+app.post('/auth', (request, response) => {
+  console.log(request.body);
 	var username = request.body.username;
 	var password = request.body.password;
 	if (username && password) {
 		connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
 			if (results.length > 0) {
+        console.log('correct username and pass')
 				request.session.loggedin = true;
         request.session.username = username;
-				// response.redirect('/home');
+				response.send('correct username and password');
 			} else {
+        console.log('Incorrect username and/or Password! ! !')
 				response.send('Incorrect Username and/or Password!');
 			}			
 			response.end();

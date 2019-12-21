@@ -15,9 +15,9 @@ import axios from 'axios';
 
 
 function App() {
-  axios.defaults.headers.post['Content-Type'] ='application/x-www-form-urlencoded';
+  axios.defaults.headers.post['Content-Type'] ='text/plain';
   axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
-  const [userDetails, setUserDetails] = useState({name: "", password: ""})
+  const [userDetails, setUserDetails] = useState({name: "invalid", password: ""})
   const [state, setState] = useState({
     columnDefs: [{
   headerName: "Make", field: "make", sortable:true, filter: true,
@@ -103,13 +103,24 @@ const onClickButton = (e) => {
   //   fs.saveAs(blob, 'CarData.xlsx');
   // });
   console.log("test on click button");
-  axios.post('http://localhost:5000/auth/', {
-    username: userDetails.name,
-    password: userDetails.password,
-  })
-    .then(
-      response => console.log(response)
-    )
+  console.log("test")
+  axios.request({
+    method: 'post',
+    url: 'http://localhost:5000/auth/',
+    headers: {
+      'content-type': 'text/plain'
+    },
+    data: {username: userDetails.name, password: userDetails.password}
+  }).then(
+    response => console.log(response.body)
+  );
+//   axios.post('http://localhost:5000/auth/', {body: {
+//     username: userDetails.name,
+//     password: userDetails.password,
+// }})
+//     .then(
+//       response => console.log(response)
+//     )
 }
 
 
@@ -136,7 +147,7 @@ useEffect(()=>{
 			<form onSubmit={onClickButton}>
 				<input type="text" name="username" placeholder="Username" required value={userDetails.name} onChange={(e) => {console.log(e.target.value); setUserDetails({...userDetails, name: e.target.value})}}/>
 				<input type="password" name="password" placeholder="Password" required value={userDetails.password} onChange ={(e) => {console.log("test"); setUserDetails({...userDetails, password: e.target.value})}}/>
-				<input type="submit" onSubmit={onClickButton}/>
+				<input type="button" value ="test" onClick={onClickButton}/>
 			</form>
 	
 
