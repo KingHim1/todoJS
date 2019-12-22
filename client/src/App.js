@@ -15,7 +15,7 @@ import axios from 'axios';
 
 
 function App() {
-  axios.defaults.headers.post['Content-Type'] ='text/plain';
+  // axios.defaults.headers.post['Content-Type'] ='text/plain';
   axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
   const [userDetails, setUserDetails] = useState({name: "invalid", password: ""})
   const [state, setState] = useState({
@@ -108,12 +108,17 @@ const onClickButton = (e) => {
     method: 'post',
     url: 'http://localhost:5000/auth/',
     headers: {
-      'content-type': 'text/plain'
+    
     },
     data: {username: userDetails.name, password: userDetails.password}
   }).then(
-    response => console.log(response.body)
-  );
+    response => {
+      if (response.data === "/home") {
+        console.log("test");
+        axios.get('http://localhost:5000/home/').then(response => console.log(response))
+      }
+      console.log(response)}
+  ).catch(error => console.log(error));
 //   axios.post('http://localhost:5000/auth/', {body: {
 //     username: userDetails.name,
 //     password: userDetails.password,

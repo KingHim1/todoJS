@@ -27,6 +27,7 @@ con.connect(function(err) {
   if (err) throw err;
   console.log("Connected!");
 });
+app.use(express.json());
 app.use((req, res, next) => {
     req.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,authorization, origin, access-control-allow-origin'); 
@@ -45,12 +46,13 @@ app.post('/auth', (request, response) => {
 	var username = request.body.username;
 	var password = request.body.password;
 	if (username && password) {
-		connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
+		con.query('SELECT * FROM todo.Users WHERE name = ? AND password = ?', [username, password], function(error, results, fields) {
 			if (results.length > 0) {
         console.log('correct username and pass')
 				request.session.loggedin = true;
         request.session.username = username;
-				response.send('correct username and password');
+        response.send('/home');
+        console.log("test")
 			} else {
         console.log('Incorrect username and/or Password! ! !')
 				response.send('Incorrect Username and/or Password!');
@@ -63,6 +65,7 @@ app.post('/auth', (request, response) => {
 	}
 });
 app.get('/home', function(request, response) {
+  console.log("home")
 	if (request.session.loggedin) {
 		response.send('Welcome back, ' + request.session.username + '!');
 	} else {
