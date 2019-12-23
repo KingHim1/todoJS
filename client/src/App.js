@@ -113,12 +113,13 @@ const onClickButton = (e) => {
     data: {username: userDetails.name, password: userDetails.password}
   }).then(
     response => {
+      console.log(response);
       if (response.data === "/home") {
         console.log("test");
         axios.get('http://localhost:5000/home/').then(response => console.log(response))
       }
       console.log(response)}
-  ).catch(error => console.log(error));
+  ).catch(error => {console.log("error occured"); console.log(error)});
 //   axios.post('http://localhost:5000/auth/', {body: {
 //     username: userDetails.name,
 //     password: userDetails.password,
