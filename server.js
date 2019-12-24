@@ -118,10 +118,10 @@ sequelize
     });
   
   };
-  // console.log("test find one")
-  //  getUser({
-  //   name: 'king',
-  // }).then(res => {console.log(JSON.stringify(res))});
+  console.log("test find one")
+   getUser({
+    name: 'king',
+  }).then(res => {console.log(JSON.stringify(res))});
 
 con.connect(function(err) {
   if (err) throw err;
@@ -142,20 +142,22 @@ passport.use(new LocalStrategy(
     function(username, password, done) {
       console.log(username)
       console.log(password)
-      Users.findOne({limit: 1, where: { name: username }}).then(user => {
-        console.log(user);
-        done(null, user);
-      })
+      const user = Users.findOne({limit: 1, where: { name: username }});
+      console.log(user)
+      done(null, user);
     }    
 ));
 
 
 app.use(passport.initialize());
 
-app.post("/auth", passport.authenticate('local',  { successRedirect: 'www.google.com',
+app.post("/auth", passport.authenticate('local',  {
 failureRedirect: '/api',
 failureFlash: true,
-session: false }), (req, res)=>{
+session: false }, (error, user) => {
+  console.log(user);
+}), (req, user)=>{
+  console.log(user.username)
   // console.log(JSON.stringify(req))
 });
 
