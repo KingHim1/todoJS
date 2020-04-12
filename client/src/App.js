@@ -30,7 +30,7 @@ import todo from './components/todoComponent/todo';
 
 
 
-function App() {
+function App(props) {
 
 
   // axios.defaults.headers.post['Content-Type'] ='text/plain';
@@ -53,6 +53,7 @@ function App() {
 // },
 })
 
+console.log(props.user)
 
 var [loggedIn, setLoggedIn] = useState(false);
 
@@ -146,6 +147,7 @@ const onClickButton = (e) => {
       console.log(response)
       if (response.status == 200) {
         console.log("200");
+        props.actions.saveUser("test")
         setLoggedIn(true);
       }
       else{
@@ -242,7 +244,8 @@ useEffect(()=>{
     </div>
   );
 }
-const mapStateToProps = state => ({
+const mapStateToProps = state => (
+  {
 
   user: state.user,
 
@@ -255,7 +258,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
 
-  actions: bindActionCreators(TodoActions, dispatch)
+  actions: bindActionCreators(UserActions, dispatch)
 
 })
 
