@@ -7,6 +7,22 @@ import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import { Workbook } from 'exceljs';
 import * as fs from 'file-saver';
 import axios from 'axios';
+import Login from './components/LoginComponent/Login';
+import Signup from './components/SignupComponent/Signup';
+import { connect } from 'react-redux'
+
+import * as UserActions from './redux/actions/userActions'
+
+import { bindActionCreators } from 'redux'
+
+
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
+import todo from './components/todoComponent/todo';
 // import {LicenseManager} from "ag-grid-enterprise";
 // LicenseManager.setLicenseKey("your license key");
 
@@ -15,8 +31,11 @@ import axios from 'axios';
 
 
 function App() {
+
+
   // axios.defaults.headers.post['Content-Type'] ='text/plain';
-  axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+  axios.defaults.headers.post['Access-Control-Allow-Origin'] = 'http://localhost:5000';
+  axios.defaults.withCredentials = true;
   const [userDetails, setUserDetails] = useState({name: "invalid", password: ""})
   const [state, setState] = useState({
     columnDefs: [{
@@ -34,12 +53,22 @@ function App() {
 // },
 })
 
+
+var [loggedIn, setLoggedIn] = useState(false);
+
 const onClick = () => {
   
-  axios.get('http://localhost:5000/api/pets')
+  axios.get('http://localhost:5000/api/')
     .then(
       response => console.log(response.data)
-    )
+    ).catch((e)=>{console.log(e)})
+}
+const onClickButtonSignOut = () => {
+  
+  axios.get('http://localhost:5000/api/signout')
+    .then(
+      response => console.log(response.data)
+    ).catch((e)=>{console.log(e)})
 }
 const title = 'Car Sell Report';
 const header = ["Year", "Month", "Make", "Model", "Quantity", "Pct"]
@@ -108,15 +137,24 @@ const onClickButton = (e) => {
     method: 'post',
     url: 'http://localhost:5000/auth/',
     headers: {
-    
     },
+    maxRedirects: 0,
+
     data: {username: userDetails.name, password: userDetails.password}
   }).then(
     response => {
+      console.log(response)
+      if (response.status == 200) {
+        console.log("200");
+        setLoggedIn(true);
+      }
+      else{
+        setLoggedIn(false);
+      }
       console.log(response);
       if (response.data === "/home") {
         console.log("test");
-        axios.get('http://localhost:5000/home/').then(response => console.log(response))
+        // axios.get('http://localhost:5000/home/').then(response => console.log(response))
       }
       console.log(response)}
   ).catch(error => {console.log("error occured"); console.log(error)});
@@ -148,6 +186,16 @@ useEffect(()=>{
 
   return (
     <div className="App">
+      <Router>
+        <Switch>
+        <Route path="/signup">
+          <Signup/>
+          </Route>
+          <Route path="/login">
+            <Login />
+          </Route>
+        </Switch>
+      </Router>
 
 			<h1>Login Form</h1>
 			<form onSubmit={onClickButton}>
@@ -155,11 +203,12 @@ useEffect(()=>{
 				<input type="password" name="password" placeholder="Password" required value={userDetails.password} onChange ={(e) => {console.log("test"); setUserDetails({...userDetails, password: e.target.value})}}/>
 				<input type="button" value ="test" onClick={onClickButton}/>
 			</form>
-	
+
+      {loggedIn? <Signup/> : <Login/>}
 
 
       <header className="App-header">
-        {/* <img src={logo} className="App-logo" alt="logo" /> */}
+        <img src={logo} className="App-logo" alt="logo" />
         <button onClick={onClick}></button>
         <p>
           Edit <code>src/App.js</code> and save to reload.
@@ -169,9 +218,15 @@ useEffect(()=>{
           target="_blank"
           rel="noopener noreferrer"
           onClick = {onClickButton}
-        >
-          Learn React
+        >sign in
         </a>
+          <a
+          className="App-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick = {onClickButtonSignOut}
+        >sign out</a>
+          
       </header>
 	<div
         className="ag-theme-balham"
@@ -187,5 +242,31 @@ useEffect(()=>{
     </div>
   );
 }
+const mapStateToProps = state => ({
 
-export default App;
+  user: state.user,
+
+
+})
+
+
+
+
+
+const mapDispatchToProps = dispatch => ({
+
+  actions: bindActionCreators(TodoActions, dispatch)
+
+})
+
+
+
+
+
+export default connect(
+
+  mapStateToProps,
+
+  mapDispatchToProps
+
+)(App)

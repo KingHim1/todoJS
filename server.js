@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const mysql = require("mysql2");
 const app = express();
 var session = require('express-session');
-
+const cors = require('cors');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
@@ -12,11 +12,15 @@ const Sequelize = require('sequelize');
 
 const port = process.env.PORT || 5000;
 
-app.use(session({
-	secret: 'secret',
-	resave: true,
-	saveUninitialized: true
-}));
+let salt = "kingSalt12345";
+app.use(cors({origin:['http://localhost:3000'],
+methods:['GET','POST', 'OPTIONS'],
+credentials: true}));
+
+app.options('*', cors({origin:['http://localhost:3000'],
+methods:['GET','POST', 'OPTIONS'],
+credentials: true}));
+
 // app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -118,33 +122,64 @@ sequelize
     });
   
   };
-  console.log("test find one")
    getUser({
-    name: 'king',
+    name: 'test',
   }).then(res => {console.log(JSON.stringify(res))});
 
 con.connect(function(err) {
   if (err) throw err;
-  console.log("Connected!");
 });
 
 app.use(express.json());
 
+app.use(session({
+  secret: 'secret',
+  // resave: true,
+  // saveUninitialized: true
+}));
+
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(user, done) {
+  done(null, user);
+});
 app.use((req, res, next) => {
     req.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,authorization, origin, access-control-allow-origin'); 
-    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+    // req.session.loggedin = false;
     // res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
     next();
   });
+
 
 passport.use(new LocalStrategy(
     function(username, password, done) {
       console.log(username)
       console.log(password)
-      const user = Users.findOne({limit: 1, where: { name: username }});
-      console.log(user)
-      done(null, user);
+      const user =  getUser({
+        name: username,
+      }).then(res => {
+        if ( res && res.dataValues.password === password){
+          done(null, res)
+        }
+        // console.log("invalid password")
+        else {
+          console.log("invalid password");
+          done(null, false, "invalid password")}}
+        )
+        .catch(
+
+          err => {
+            console.log(err)
+            // done(null, false, "error occurred")
+          }
+          
+        );
+      
+      
     }    
 ));
 
@@ -152,17 +187,28 @@ passport.use(new LocalStrategy(
 app.use(passport.initialize());
 
 app.post("/auth", passport.authenticate('local',  {
-failureRedirect: '/api',
-failureFlash: true,
-session: false }, (error, user) => {
-  console.log(user);
-}), (req, user)=>{
-  console.log(user.username)
-  // console.log(JSON.stringify(req))
+  session: true }), (req, res)=>{
+  req.session.loggedin = true;
+  req.session.username = res.req.body.username;
+  console.log(res.req.body)
+  req.session.save();
+  // res.redirect('/home');
+  // console.log("__ user name");
+  // console.log(JSON.stringify(res));
+  res.status(200)
+  res.send("authenticated")
+  // res.format({
+  //   json: () => res.status(403).json({
+  //     error: 'You must login to see this',
+  //     location: 'localhost:3000/login'
+  //   }),
+    // html: () => res.redirect('https://login.microsoftonline.com')
+    // default: () => res.redirect('https://login.microsoftonline.com')
+  
 });
 
 app.post('/api/pets', (request, response) => {
-  console.log(request.body);
+  // console.log("request body ", request.body);
 	var username = request.body.username;
 	var password = request.body.password;
 	if (username && password) {
@@ -172,7 +218,6 @@ app.post('/api/pets', (request, response) => {
 				request.session.loggedin = true;
         request.session.username = username;
         response.redirect('/home');
-        console.log("test")
 			} else {
         console.log('Incorrect username and/or Password! ! !')
 				response.send('Incorrect Username and/or Password!');
@@ -186,8 +231,9 @@ app.post('/api/pets', (request, response) => {
 });
 
 app.get('/home', function(request, response) {
-  console.log("home")
+  // console.log("home")
 	if (request.session.loggedin) {
+    console.log(JSON.stringify(request.session))
 		response.send('Welcome back, ' + request.session.username + '!');
 	} else {
 		response.send('Please login to view this page!');
@@ -195,15 +241,38 @@ app.get('/home', function(request, response) {
 	response.end();
 });
 app.get('/', (req, res) => {
-  console.log(req)
+  // console.log(req)
   res.send('You hit the home page without restarting the server automatically\n')
 })
 
+
+app.get('/api/signout', (req, res) => {
+  // console.log(req)
+  // res.send('You hit the home page without restarting the server automatically\n')
+  if(req.session.loggedin){
+    req.session.loggedin = false;
+    res.send("signed out");
+  }
+  else{
+    res.send("not logged in");
+  }
+
+})
+
 app.get("/api/", (req, res) => {
+  if(req.session.loggedin){
+    console.log("logged in")
     con.query("SELECT * FROM todo.Users", function(err, result, fields) {
       if (err) throw err;
       res.send(result);
-    });
+    }
+    
+    );
+  
+  }
+  else{
+    res.send("not signed in")
+  } 
   });
   app.get("/api/test", (req, res) => {
     con.query("SELECT * FROM todo.Users", function(err, result, fields) {
@@ -213,10 +282,15 @@ app.get("/api/", (req, res) => {
   });
 //need to add condition on user todo
 app.get("/api/todos", (req, res) => {
+  if (request.session.loggedin) {
   con.query("SELECT * FROM todo.todos WHERE todo.user = user.user", function (err, result, field) {
     if (err) throw err;
     res.send(result);
   });
+}
+else{
+  res.send("not signed in")
+}
 });
 // // Need to add post to create posts 
 // app.post("/api/todos", (req, res) => {
